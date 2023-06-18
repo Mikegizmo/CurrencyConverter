@@ -1,11 +1,11 @@
 import React from "react";
-import Options from "./screens/Options";
+import Home from "./screens/Home";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export default () => {
   return (
     <SafeAreaProvider>
-      <Options />
+      <Home />
     </SafeAreaProvider>
   )  
 }

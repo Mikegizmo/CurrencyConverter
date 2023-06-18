@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@babel/eslint-parser": "^7.22.5",
+    "date-fns": "^2.30.0",
     "eslint": "^8.42.0",
     "eslint-config-handlebarlabs": "^0.0.6",
     "expo": "~48.0.18",
