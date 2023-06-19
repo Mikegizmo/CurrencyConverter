@@ -1,11 +1,11 @@
 import React from "react";
-import Home from "./screens/Home";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import Navigation from "./config/Navigation";
 
 export default () => {
   return (
     <SafeAreaProvider>
-      <Home />
+      <Navigation />
     </SafeAreaProvider>
   )  
 }
