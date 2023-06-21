@@ -1,6 +1,6 @@
 export default {
   text: "#343434",
-  border: "#E2E2E2",
+  border: "#05472A",
   green: "#85BB65",
   white: '#fff',
   textLight: '#797979',
