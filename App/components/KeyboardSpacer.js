@@ -1,35 +1,47 @@
 import React, { useState, useEffect } from "react";
-import { View, Keyboard, Dimensions, StyleSheet } from 'react-native';
+import { View, Keyboard, Dimensions, Platform, StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
     left: 0,
     right: 0,
-    bottom: 0
-  }
+    bottom: 0,
+  },
 });
 
-export const KeyboardSpacer = ({ onToggle }) => {
-const [keyboardSpace, setKeyboardSpace] = useState(0);
+export const KeyboardSpacer = ({ style, onToggle = () => null }) => {
+  const [keyboardSpace, setKeyboardSpace] = useState(0)
 
   useEffect(() => {
-    const showListener = Keyboard.addListener('keyboardDidShow', (event) => {
-      const screenHeight = Dimensions.get('window').height;
-      const endY = event.endCoordinates.screenY;
+    const updateKeyboardSpace = event => {
+      if (!event.endCoordinates) {
+        return
+      }
 
-      setKeyboardSpace(screenHeight - endY + 20);
-      onToggle(true);
-    });
+      const screenHeight = Dimensions.get("window").height
+      const newKeyboardSpace = screenHeight - event.endCoordinates.screenY
+      setKeyboardSpace(newKeyboardSpace)    
+      onToggle(true, newKeyboardSpace)
+    }
 
-    const hideListener = Keyboard.addListener('keyboardDidHide', () => {
-      setKeyboardSpace(0);
-      onToggle(false);
-    });
+    const showEvt = 
+      Platform.OS === "android" ? "keyboardDidShow" : "keyboardWillShow"
+    const showListener = Keyboard.addListener(showEvt, updateKeyboardSpace)
+
+    const resetKeyboardSpace = () => {
+      setKeyboardSpace(0)
+      onToggle(false, 0)
+    }
+
+    const hideEvt = 
+      Platform.OS === "android" ? "keyboardDidHide" : "keyboardWillHide"
+    const hideListener = Keyboard.addListener(hideEvt, resetKeyboardSpace)
 
     return () => {
-      hideListener.remove();
-      showListener.remove();
+      showListener.remove()
+      hideListener.remove()
     }
-  }, [])
-  return <View style={[styles.container, { height: keyboardSpace}]} />
+  }, [onToggle])
+
+  return <View style={[styles.container, { height: keyboardSpace}, style]} />
 }
