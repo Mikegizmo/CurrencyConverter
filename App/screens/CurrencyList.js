@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { StatusBar } from "expo-status-bar";
 import { FlatList, View, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -7,6 +7,7 @@ import { Entypo } from "@expo/vector-icons"
 import colors from "../constants/colors";
 import currencies from "../data/currencies.json";
 import { RowItem, RowSeparator } from "../components/RowItem";
+import { ConversionContext } from "../util/ConversionContext";
 
 const styles = StyleSheet.create({
   icon: {
@@ -21,7 +22,10 @@ const styles = StyleSheet.create({
 
 export default ({ navigation, route = {} }) => {
   const insets = useSafeAreaInsets();
+  const { baseCurrency, quoteCurrency, setBaseCurrency, setQuoteCurrency } = useContext(ConversionContext);
+
   const params = route.params || {};
+  const { isBaseCurrency } = params;
 
   return (
     <View style={{ backgroundColor: colors.white }}>
@@ -29,15 +33,23 @@ export default ({ navigation, route = {} }) => {
       <FlatList 
         data={currencies}
         renderItem={({ item }) => {
-          const selected = params.activeCurrency === item;
+          let selected = false;
+
+          if (isBaseCurrency && item === baseCurrency) {
+            selected = true;
+          } else if (!isBaseCurrency && item ===quoteCurrency) {
+            selected = true;
+          }
           return (
             <RowItem 
               title={item}
               onPress={() => {
-                if (params.onChange) {
-                  params.onChange(item);
+                if (isBaseCurrency) {
+                  setBaseCurrency(item);
+                } else {
+                  setQuoteCurrency(item);
                 }
-                navigation.pop()
+                navigation.pop();
               }}
               rightIcon={
                 selected && (
@@ -49,7 +61,7 @@ export default ({ navigation, route = {} }) => {
             />
           )  
         }}
-        keyExtractor={(item) => item}
+        keyExtractor={item => item}
         ItemSeparatorComponent={() => <RowSeparator />}
         ListFooterComponent={() => <View style={{ paddingBottom: insets.bottom }} />}
       />
